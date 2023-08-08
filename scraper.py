@@ -2,9 +2,9 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re
 
-source = "http://www.jhowell.net/cf/scores/byname.htm"
+SOURCE = "http://www.jhowell.net/cf/scores/byname.htm"
 
-fp = urllib.request.urlopen(source)  # this part took me way too fucking long to figure out
+fp = urllib.request.urlopen(SOURCE)  # this part took me way too long to figure out
 html = fp.read()
 
 soup = BeautifulSoup(html, "html.parser")
@@ -20,8 +20,9 @@ pattern = r"^(.*?)\s*(\([A-Za-z]+\))?\s*\("  # ahhh fucking regexes. thank god f
 #  Second group matches any only-alphabet parentheses
 #  Then ends at the first next open paren
 #  So first group plus second gets me what I want
-
-teams = ["Air Force"]  # fuck you, i'm not trying to think bout this <br> removing shit rn
+teams = [
+    "Air Force"
+]  # fuck you, i'm not trying to think bout this <br> removing shit rn
 for anchor in anchors[1:]:  # looping through them tags
     text = anchor.string  # get the text out (breaks for Air Force, see comment above)
     if not text:  # in case something goes bad...
@@ -32,17 +33,16 @@ for anchor in anchors[1:]:  # looping through them tags
     if match:  # good to double-check
         team_name = match.group(1)  # get the first out-of-parentheses bit
         additional_info = match.group(2)  # get the second in-parentheses bit
-        if additional_info:  # if it exists, we'll pop it on there w/ the space put back in
+        if additional_info:
+            # if it exists, we'll pop it on there w/ the space put back in
             team_name += " " + additional_info
     teams.append(team_name.strip())  # stick it in the list
 
 
-for team in teams:
-    print(team)  # checking...
-print("\n"*2 + "="*50 + "\n" + "YAY" if len(teams) == len(links) else "FUCK")  # checking...
+def serialize_record(team, page):
+    pass
 
 
 pages = dict(zip(teams, links))  # ok, sometimes i do like python...
-
-for thing, other_thing in pages.items():
-    print(f"{thing} ----> {other_thing}")  # y'all without the connecty-text-thingy are missing out (it has a name, I'm sure)
+for team, page in pages.values():
+    serialize_record(page)
